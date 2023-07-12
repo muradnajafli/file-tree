@@ -20,6 +20,7 @@ public class FileTreeImpl implements FileTree {
             return Optional.of(file.getName() + " " + file.length() + BYTES);
         }
         if (file.isDirectory()) {
+            System.out.println(Optional.of(buildDirectoryTree(file, new ArrayList<>())));
             return Optional.of(buildDirectoryTree(file, new ArrayList<>()));
         }
         return Optional.empty();
