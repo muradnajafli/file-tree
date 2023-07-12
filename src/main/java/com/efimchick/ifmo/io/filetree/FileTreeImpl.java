@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class FileTreeImpl implements FileTree {
+    private static final String BYTES = " bytes";
 
     @Override
     public Optional<String> tree(Path path) {
@@ -16,7 +17,7 @@ public class FileTreeImpl implements FileTree {
             return Optional.empty();
         }
         if (file.isFile()) {
-            return Optional.of(file.getName() + " " + file.length() + " bytes");
+            return Optional.of(file.getName() + " " + file.length() + BYTES);
         }
         if (file.isDirectory()) {
             return Optional.of(buildDirectoryTree(file, new ArrayList<>()));
@@ -26,9 +27,8 @@ public class FileTreeImpl implements FileTree {
 
     private String buildDirectoryTree(File folder, List<Boolean> lastFolders) {
         StringBuilder directory = new StringBuilder();
-        if (lastFolders.size() != 0) {
+        if (!lastFolders.isEmpty()) {
             directory.append(lastFolders.get(lastFolders.size() - 1) ? "└─ " : "├─ ");
-            //├─ └─
         }
         directory.append(folder.getName()).append(" ").append(folderSize(folder));
 
@@ -39,11 +39,7 @@ public class FileTreeImpl implements FileTree {
         for (int i = 0; i < count; i++) {
             directory.append("\n");
             for (Boolean lastFolder : lastFolders) {
-                if (lastFolder) {
-                    directory.append("   ");
-                } else {
-                    directory.append("│  ");
-                }
+                directory.append(lastFolder ? "   " : "│  ");
             }
 
             if (files[i].isFile()) {
@@ -52,10 +48,9 @@ public class FileTreeImpl implements FileTree {
                         .append(files[i].getName())
                         .append(" ")
                         .append(files[i].length())
-                        .append(" bytes");
+                        .append(BYTES);
             }
-
-            if (files[i].isDirectory()) {
+            else  {
                     ArrayList<Boolean> list = new ArrayList<>(lastFolders);
                     list.add(i + 1 == count);
                     directory.append(buildDirectoryTree(files[i], list));
@@ -79,7 +74,7 @@ public class FileTreeImpl implements FileTree {
         return size;
     }
     private String folderSize(File folder) {
-        return getFolderSize(folder) + " bytes";
+        return getFolderSize(folder) + BYTES;
     }
 
     private File[] sortFiles(File[] folder) {
