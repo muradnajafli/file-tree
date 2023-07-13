@@ -78,20 +78,19 @@ public class FileTreeImpl implements FileTree {
     }
 
     private File[] sortFiles(File[] folder) {
-        Arrays.sort(folder);
-        List<File> sorted = new ArrayList<>();
+        Arrays.sort(folder, (file1, file2) -> {
+            boolean isDirectory1 = file1.isDirectory();
+            boolean isDirectory2 = file2.isDirectory();
 
-        for (File directory : folder) {
-            if (directory.isDirectory()) {
-                sorted.add(directory);
+            if (isDirectory1 && !isDirectory2) {
+                return -1;
+            } else if (!isDirectory1 && isDirectory2) {
+                return 1;
             }
-        }
-        for (File file : folder) {
-            if (file.isFile()) {
-                sorted.add(file);
-            }
-        }
 
-        return sorted.toArray(new File[0]);
+            // Compare file names ignoring case
+            return file1.getName().compareToIgnoreCase(file2.getName());
+        });
+        return folder;
     }
 }
